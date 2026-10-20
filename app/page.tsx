@@ -17,7 +17,7 @@ export default function ChatWidget() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('google/gemini-2.0-flash-001');
+  const [selectedModel, setSelectedModel] = useState('google/gemini-3.5-flash-lite');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,7 +45,9 @@ export default function ChatWidget() {
         }),
       });
 
-      const data = await res.json();
+      // If the server returns something that is not JSON (e.g. a 404 page),
+      // fall back to an empty object instead of jumping to "Network error".
+      const data = await res.json().catch(() => ({}));
 
       if (data.reply) {
         setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
@@ -55,7 +57,7 @@ export default function ChatWidget() {
           { role: 'assistant', content: 'Sorry, something went wrong. Please check your API configuration.' },
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'Network error. Please try again later.' },
@@ -107,8 +109,8 @@ export default function ChatWidget() {
                 onChange={(e) => setSelectedModel(e.target.value)}
                 className="bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-indigo-500"
               >
-                <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
-                <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+                <option value="google/gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
+                <option value="google/gemini-3.5-flash">Gemini 3.5 Flash</option>
               </select>
 
               <button
