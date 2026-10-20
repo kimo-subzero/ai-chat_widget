@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 // Models that the widget is allowed to use (OpenRouter model IDs).
-// Anything else (e.g. the old gemini-2.0-flash-001) falls back to DEFAULT_MODEL.
+// Anything else falls back to DEFAULT_MODEL.
 const ALLOWED_MODELS = [
   "google/gemini-3.5-flash-lite", // cheaper / faster
   "google/gemini-3.5-flash",      // smarter
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model,
+        max_tokens: 1024, // limits reply length so it fits your OpenRouter credits
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
       }),
     });
